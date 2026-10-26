@@ -15,6 +15,7 @@ All data is fictional and intended for educational purposes.
 - Detect successful logins following multiple authentication failures.
 - Review alert results and possible explanations.
 - Document findings and recommend investigation steps.
+- Test detection logic using automated unit tests.
 - Consider false positives and detection limitations.
 
 ## Project Structure
@@ -28,6 +29,7 @@ security-monitoring-lab/
 ├── reports/
 │   └── detection-results.md
 ├── detect_suspicious_logins.py
+├── test_detection.py
 └── README.md
 ```
 
@@ -35,11 +37,13 @@ security-monitoring-lab/
 
 The dataset contains 52 simulated authentication events with the following fields:
 
-- `timestamp` — time of the authentication event.
-- `username` — fictional account name.
-- `source_ip` — documentation-only source IP address.
-- `event_type` — type of event.
-- `status` — authentication outcome.
+| Field | Description |
+|---|---|
+| `timestamp` | Time of the authentication event in UTC. |
+| `username` | Fictional account name associated with the event. |
+| `source_ip` | Documentation-only source IP address. |
+| `event_type` | Type of event recorded. |
+| `status` | Authentication outcome, such as success or failure. |
 
 The dataset is designed to demonstrate detection logic and does not represent real user activity or real attacker infrastructure.
 
@@ -47,9 +51,9 @@ The dataset is designed to demonstrate detection logic and does not represent re
 
 ### Rule 1: Repeated Failed Logins
 
-Detects five or more failed login attempts from the same username and source IP address within five minutes.
+Detects five or more failed login attempts from the same username and source IP address within a five-minute window.
 
-**Purpose:** Identify potential password-guessing or brute-force activity.
+**Purpose:** Identify potential password-guessing or brute-force activity that may require further investigation.
 
 ### Rule 2: Successful Login After Repeated Failures
 
@@ -57,50 +61,79 @@ Detects a successful login following at least three failed attempts for the same
 
 **Purpose:** Identify authentication sequences that may warrant investigation for possible account compromise.
 
-## Results
+These rules identify potentially suspicious patterns. They do not independently prove malicious activity or account compromise.
 
-The Python script processed 52 authentication events and generated six alerts:
+## Detection Results
 
-| Detection rule | Alerts |
+The detection script was run against the 52 simulated authentication events.
+
+| Metric | Result |
 |---|---:|
-| Repeated failed logins | 2 |
-| Successful login after repeated failures | 4 |
-| **Total** | **6** |
+| Authentication events analysed | 52 |
+| Total alerts generated | 6 |
+| Repeated failed-login alerts | 2 |
+| Successful login after repeated failures alerts | 4 |
 
-These are simulated alerts, not confirmed security incidents. Legitimate user behaviour can also trigger detection rules.
+The alerts identified authentication patterns that met the configured thresholds.
 
-## Tools and Technologies
+These results are based on synthetic data. Each alert would require further investigation in a real security monitoring environment before drawing conclusions about malicious activity.
+
+See the [Detection Results Report](reports/detection-results.md) for additional findings and recommendations.
+
+## Automated Tests
+
+The detection logic is tested using Python's built-in `unittest` framework. Three automated tests were executed successfully.
+
+| Test | Purpose | Result |
+|---|---|---|
+| `test_repeated_failed_logins` | Verifies that five failed login attempts within the configured five-minute window trigger a repeated-failure alert. | PASS |
+| `test_success_after_repeated_failures` | Verifies that a successful login following at least three failed attempts within five minutes triggers an alert. | PASS |
+| `test_normal_login_does_not_trigger_alert` | Verifies that a single failed login followed by a successful login does not generate an alert. | PASS |
+
+**Test summary: 3 passed, 0 failed.**
+
+The tests use synthetic authentication events and documentation-only IP addresses. They verify the expected behaviour for these specific scenarios, but do not establish complete detection coverage or prove that the system is free from false positives.
+
+## How to Run
+
+### Requirements
 
 - Python 3
-- CSV log analysis
-- Rule-based threat detection
-- macOS Terminal
-- GitHub for version control and documentation
+- No third-party Python packages required
 
-## Repository Contents
+Run the following commands from the project directory.
 
-- [Assessment scope](scope/assessment-scope.md)
-- [Authentication log dataset](data/authentication-logs.csv)
-- [Python detection script](detect_suspicious_logins.py)
-- [Detection results report](reports/detection-results.md)
+### 1. Run the Detection Script
 
-## Limitations
+```bash
+python3 detect_suspicious_logins.py
+```
 
-- The dataset is simulated.
-- The rules use fixed thresholds.
-- False positives are possible.
-- The analysis is limited to the available log fields.
-- Alerts do not establish malicious intent or account compromise.
-- No production systems or real user credentials were involved.
+The script reads the authentication log CSV, analyses the events using the configured detection rules, and prints any generated alerts.
 
-## Future Improvements
+The script expects the CSV file to be named `authentication-logs.csv` in the project directory. If the dataset is stored in the `data/` folder, update the `LOG_FILE` setting in the script accordingly.
 
-- Add automated test cases for detection rules.
-- Improve alert deduplication.
-- Export alerts to a structured CSV report.
-- Add detection for other suspicious authentication patterns.
-- Document false-positive testing and detection coverage.
+### 2. Run the Automated Tests
 
-## Ethical Considerations
+```bash
+python3 -m unittest -v test_detection.py
+```
 
-This project uses fictional data and is designed for defensive security education. The IP addresses are reserved for documentation and examples and must not be treated as real malicious indicators.
+The test runner displays the result of each test individually.
+
+Expected summary:
+
+```text
+Ran 3 tests in ...
+OK
+```
+
+The exact execution time may vary. An `OK` result indicates that all three tests passed.
+
+### 3. Check Python Syntax
+
+```bash
+python3 -m py_compile detect_suspicious_logins.py test_detection.py
+```
+
+No output indicates that both
