@@ -1,0 +1,45 @@
+Loaded 52 authentication events.
+Total alerts: 6
+
+[ALERT] Successful login after repeated failures
+Username: j.smith
+Source IP: 198.51.100.23
+Failed attempts: 4
+Window start: 2026-10-26T09:04:11Z
+Window end: 2026-10-26T09:05:47Z
+
+[ALERT] Successful login after repeated failures
+Username: j.smith
+Source IP: 198.51.100.23
+Failed attempts: 3
+Window start: 2026-10-26T09:52:43Z
+Window end: 2026-10-26T09:54:02Z
+
+[ALERT] Repeated failed logins
+Username: a.patel
+Source IP: 203.0.113.77
+Failed attempts: 5
+Window start: 2026-10-26T10:24:39Z
+Window end: 2026-10-26T10:26:12Z
+
+[ALERT] Successful login after repeated failures
+Username: m.chen
+Source IP: 198.51.100.44
+Failed attempts: 3
+Window start: 2026-10-26T10:42:07Z
+Window end: 2026-10-26T10:43:20Z
+
+[ALERT] Repeated failed logins
+Username: admin
+Source IP: 203.0.113.99
+Failed attempts: 5
+Window start: 2026-10-26T09:40:26Z
+Window end: 2026-10-26T09:42:02Z
+
+[ALERT] Successful login after repeated failures
+Username: r.jones
+Source IP: 198.51.100.88
+Failed attempts: 4
+Window start: 2026-10-26T10:07:31Z
+Window end: 2026-10-26T10:09:10Z
+Exported 6 alerts to reports/alerts.csv
